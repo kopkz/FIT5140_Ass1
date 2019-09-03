@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14492.1" systemVersion="18G87" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Images" representedClassName="Images" syncable="YES">
+        <attribute name="imageName" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="imageOfSight" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sights" inverseName="sightImages" inverseEntity="Sights" syncable="YES"/>
+    </entity>
+    <entity name="Sights" representedClassName="Sights" syncable="YES">
+        <attribute name="descripution" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="iconName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="shortDesscripution" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="sightImages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Images" inverseName="imageOfSight" inverseEntity="Images" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Sights" positionX="-54" positionY="-9" width="128" height="150"/>
+        <element name="Images" positionX="-54" positionY="36" width="128" height="75"/>
+    </elements>
+</model>
