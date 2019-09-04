@@ -138,6 +138,7 @@ class SightsListTableViewController: UITableViewController, UISearchResultsUpdat
             if location.title == filteredSights[indexPath.row].name {
                 filteredLocation =  location
                 mapViewController?.focusOn(annotation: filteredLocation)
+                self.navigationController?.popViewController(animated: true)
             }
         }
        

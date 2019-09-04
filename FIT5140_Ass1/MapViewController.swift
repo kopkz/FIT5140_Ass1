@@ -37,6 +37,43 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
     
     
+    func mapView(_ mapView: MKMapView!, viewFor annotation: MKAnnotation!) -> MKAnnotationView! {
+        
+        if annotation is MKUserLocation {
+            return nil
+        }
+        
+        let reuseId = "sightAnnotaation"
+        
+        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId)
+        if annotationView == nil {
+            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+            annotationView?.canShowCallout = true
+            
+            let rightButton: AnyObject! = UIButton(type: UIButton.ButtonType.detailDisclosure)
+            
+            annotationView!.rightCalloutAccessoryView = rightButton as? UIView
+        }
+        else {
+            annotationView?.annotation = annotation
+        }
+        
+        return annotationView
+    }
+    
+    
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        if control == view.rightCalloutAccessoryView {
+            performSegue(withIdentifier: "getSightDetail", sender: view)
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "getSightDetail"{
+            let destination = segue.destination as! SightInfoViewController
+            destination.sightName = (sender as! MKAnnotationView).annotation!.title!
+        }
+    }
     
     /*
     // MARK: - Navigation
@@ -50,27 +87,27 @@ class MapViewController: UIViewController, MKMapViewDelegate {
 
 }
 
-extension ViewController: MKMapViewDelegate {
-    
-    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        
-        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: "AnnotationView")
-        
-        if annotationView == nil {
-            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: "AnnotationView")
-        }
-        
-        if  annotation !== mapView.userLocation {
-            annotationView?.image = UIImage(named: "camera-150.png")
-            
-        }
-        
-        annotationView?.canShowCallout = true
-        
-        return annotationView
-    }
-    
-    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        print("The annotation was selected: \(String(describing: view.annotation?.title))")
-    }
-}
+//extension ViewController: MKMapViewDelegate {
+//    
+//    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+//        
+//        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: "AnnotationView")
+//        
+//        if annotationView == nil {
+//            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: "AnnotationView")
+//        }
+//        
+//        if  annotation !== mapView.userLocation {
+//            annotationView?.image = UIImage(named: "camera-150.png")
+//            
+//        }
+//        
+//        annotationView?.canShowCallout = true
+//        
+//        return annotationView
+//    }
+//    
+//    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+//        print("The annotation was selected: \(String(describing: view.annotation?.title))")
+//    }
+//}

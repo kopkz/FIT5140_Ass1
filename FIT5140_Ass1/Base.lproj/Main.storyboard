@@ -34,6 +34,7 @@
                     <navigationItem key="navigationItem" title="Melbourne Exploring" id="nwy-L5-aMS"/>
                     <connections>
                         <outlet property="mapView" destination="O2r-Wu-KqU" id="k2i-dJ-lyp"/>
+                        <segue destination="kSL-4c-Hhv" kind="show" identifier="getSightDetail" id="7ap-3D-Gvt"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -412,25 +413,25 @@
         <!--Sight Information-->
         <scene sceneID="Kvw-Hg-ymU">
             <objects>
-                <viewController id="kSL-4c-Hhv" sceneMemberID="viewController">
+                <viewController id="kSL-4c-Hhv" customClass="SightInfoViewController" customModule="FIT5140_Ass1" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8gL-zq-2eS">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ShK-4H-p9C">
-                                <rect key="frame" x="16" y="60" width="45" height="21"/>
+                                <rect key="frame" x="16" y="104" width="45" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Location" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QPi-lh-DF6">
-                                <rect key="frame" x="16" y="97" width="66" height="21"/>
+                                <rect key="frame" x="16" y="141" width="66" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="8k1-7M-rqz">
-                                <rect key="frame" x="16" y="400" width="382" height="379"/>
+                                <rect key="frame" x="16" y="444" width="382" height="335"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="xDi-Oh-yOd">
                                     <size key="itemSize" width="50" height="50"/>
@@ -476,7 +477,13 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="BgJ-WK-iIF"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Sight Information" id="Bbo-CV-ftO"/>
+                    <navigationItem key="navigationItem" title="Sight Information" id="IZL-cc-Ptq"/>
+                    <connections>
+                        <outlet property="imageCollectionView" destination="8k1-7M-rqz" id="1gg-ZP-B7M"/>
+                        <outlet property="sightDesTextView" destination="5JR-gl-8jC" id="7X2-bx-7xR"/>
+                        <outlet property="sightLocationLabel" destination="QPi-lh-DF6" id="WgH-bE-pwJ"/>
+                        <outlet property="sightNameLabel" destination="ShK-4H-p9C" id="r7h-Jy-50n"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xBp-f9-jjl" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

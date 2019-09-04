@@ -24,10 +24,8 @@
 		703A8A6E231D5E1500B0B26F /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 703A8A6D231D5E1500B0B26F /* Icons.swift */; };
 		703A8A70231D77CE00B0B26F /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 703A8A6F231D77CE00B0B26F /* CameraViewController.swift */; };
 		703A8A76231E8A8C00B0B26F /* SightsAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 703A8A75231E8A8C00B0B26F /* SightsAnnotationView.swift */; };
-		703A8A78231E92C700B0B26F /* SightsDetailMapView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 703A8A77231E92C700B0B26F /* SightsDetailMapView.xib */; };
-		703A8A7A231E92FA00B0B26F /* SightsDetailMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 703A8A79231E92FA00B0B26F /* SightsDetailMapView.swift */; };
+		7054D035231F2C07002E0A3A /* SightInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7054D034231F2C07002E0A3A /* SightInfoViewController.swift */; };
 		70A2E6F823182FC100A59F02 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A2E6F723182FC100A59F02 /* AppDelegate.swift */; };
-		70A2E6FA23182FC100A59F02 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A2E6F923182FC100A59F02 /* ViewController.swift */; };
 		70A2E6FD23182FC100A59F02 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 70A2E6FB23182FC100A59F02 /* Main.storyboard */; };
 		70A2E70223182FC200A59F02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70A2E70123182FC200A59F02 /* Assets.xcassets */; };
 		70A2E70523182FC200A59F02 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 70A2E70323182FC200A59F02 /* LaunchScreen.storyboard */; };
@@ -52,11 +50,9 @@
 		703A8A6D231D5E1500B0B26F /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
 		703A8A6F231D77CE00B0B26F /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		703A8A75231E8A8C00B0B26F /* SightsAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SightsAnnotationView.swift; sourceTree = "<group>"; };
-		703A8A77231E92C700B0B26F /* SightsDetailMapView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SightsDetailMapView.xib; sourceTree = "<group>"; };
-		703A8A79231E92FA00B0B26F /* SightsDetailMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SightsDetailMapView.swift; sourceTree = "<group>"; };
+		7054D034231F2C07002E0A3A /* SightInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SightInfoViewController.swift; sourceTree = "<group>"; };
 		70A2E6F423182FC100A59F02 /* FIT5140_Ass1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FIT5140_Ass1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		70A2E6F723182FC100A59F02 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		70A2E6F923182FC100A59F02 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		70A2E6FC23182FC100A59F02 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		70A2E70123182FC200A59F02 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		70A2E70423182FC200A59F02 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -107,7 +103,6 @@
 				703A8A4E231BCFD800B0B26F /* Database */,
 				70A2E70C2319099F00A59F02 /* DataModel */,
 				70A2E6F723182FC100A59F02 /* AppDelegate.swift */,
-				70A2E6F923182FC100A59F02 /* ViewController.swift */,
 				70A2E6FB23182FC100A59F02 /* Main.storyboard */,
 				70A2E70123182FC200A59F02 /* Assets.xcassets */,
 				70A2E70323182FC200A59F02 /* LaunchScreen.storyboard */,
@@ -122,8 +117,7 @@
 				703A8A6D231D5E1500B0B26F /* Icons.swift */,
 				703A8A6F231D77CE00B0B26F /* CameraViewController.swift */,
 				703A8A75231E8A8C00B0B26F /* SightsAnnotationView.swift */,
-				703A8A77231E92C700B0B26F /* SightsDetailMapView.xib */,
-				703A8A79231E92FA00B0B26F /* SightsDetailMapView.swift */,
+				7054D034231F2C07002E0A3A /* SightInfoViewController.swift */,
 			);
 			path = FIT5140_Ass1;
 			sourceTree = "<group>";
@@ -200,7 +194,6 @@
 			files = (
 				70A2E70523182FC200A59F02 /* LaunchScreen.storyboard in Resources */,
 				70A2E70223182FC200A59F02 /* Assets.xcassets in Resources */,
-				703A8A78231E92C700B0B26F /* SightsDetailMapView.xib in Resources */,
 				70A2E6FD23182FC100A59F02 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -214,8 +207,8 @@
 			files = (
 				703A8A6C231D4F8500B0B26F /* ImageCollectionViewCell.swift in Sources */,
 				703A8A50231BD01000B0B26F /* DatabaseProtocol.swift in Sources */,
+				7054D035231F2C07002E0A3A /* SightInfoViewController.swift in Sources */,
 				703A8A55231BD52700B0B26F /* Images+CoreDataClass.swift in Sources */,
-				70A2E6FA23182FC100A59F02 /* ViewController.swift in Sources */,
 				703A8A57231BD52700B0B26F /* Sights+CoreDataClass.swift in Sources */,
 				703A8A5E231C1AE900B0B26F /* SightsListTableViewController.swift in Sources */,
 				703A8A60231C1D6100B0B26F /* SightTableViewCell.swift in Sources */,
@@ -224,7 +217,6 @@
 				703A8A76231E8A8C00B0B26F /* SightsAnnotationView.swift in Sources */,
 				703A8A56231BD52700B0B26F /* Images+CoreDataProperties.swift in Sources */,
 				703A8A5A231BD7F200B0B26F /* CoreDataController.swift in Sources */,
-				703A8A7A231E92FA00B0B26F /* SightsDetailMapView.swift in Sources */,
 				703A8A68231D4E2F00B0B26F /* CreatNewSightUICollectionViewController.swift in Sources */,
 				70A2E6F823182FC100A59F02 /* AppDelegate.swift in Sources */,
 				703A8A5C231C171B00B0B26F /* MulticastDelegate.swift in Sources */,
