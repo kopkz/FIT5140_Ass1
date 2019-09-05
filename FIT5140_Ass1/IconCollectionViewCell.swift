@@ -12,4 +12,10 @@ class IconCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var iconImageView: UIImageView!
     @IBOutlet weak var iconNameLabel: UILabel!
+    
+    override var isSelected: Bool{
+        didSet(newValue){
+            contentView.backgroundColor = newValue ? UIColor.gray : UIColor.white
+        }
+    }
 }

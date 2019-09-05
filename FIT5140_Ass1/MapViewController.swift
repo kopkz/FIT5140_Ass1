@@ -6,12 +6,16 @@
 //  Copyright © 2019 匡正. All rights reserved.
 //
 
+
 import UIKit
 import MapKit
 
-class MapViewController: UIViewController, MKMapViewDelegate {
+class MapViewController: UIViewController, MKMapViewDelegate, MapFocusDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
+    
+    weak var databaseController: DatabaseProtocol?
+    var locations = [LocationAnnotation]()
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -22,6 +26,18 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         
         mapView.delegate = self
         
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        databaseController = appDelegate.databaseController
+        let sights = databaseController!.fetchSights()
+    
+        for sight in sights {
+            let location = LocationAnnotation(newTitle: sight.name!, newSubtitle: sight.shortDesscripution!, lat: sight.latitude, long: sight.longitude, iconName: sight.iconName!)
+             locations.append(location)
+            mapView.addAnnotation(location)
+        }
+        
+        
+        
 //        let testAnn = LocationAnnotation(newTitle: "test", newSubtitle: "eee", lat: -37.814337, long: 144.965357, iconName: "camera-150.png")
 //        mapView.addAnnotation(testAnn)
         
@@ -31,33 +47,53 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     func focusOn(annotation: MKAnnotation) {
         mapView.selectAnnotation(annotation,animated: true)
         
-        let zoomRegion = MKCoordinateRegion(center: annotation.coordinate, latitudinalMeters: 1000, longitudinalMeters: 1000)
+        let zoomRegion = MKCoordinateRegion(center: annotation.coordinate, latitudinalMeters: 250, longitudinalMeters: 250)
         mapView.setRegion(mapView.regionThatFits(zoomRegion), animated: true)
+    }
+    
+    func removeAnnotation(name: String) {
+        for location in locations {
+            if location.title == name {
+                mapView.selectAnnotation(location,animated: true)
+                mapView.removeAnnotation(location)
+            }
+        }
         
     }
     
     
-    func mapView(_ mapView: MKMapView!, viewFor annotation: MKAnnotation!) -> MKAnnotationView! {
-        
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+
         if annotation is MKUserLocation {
             return nil
         }
-        
+
         let reuseId = "sightAnnotaation"
-        
+
         var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId)
         if annotationView == nil {
             annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
             annotationView?.canShowCallout = true
+            var imageName: String
             
+            let sights = databaseController!.fetchSights()
+            
+            for sight in sights {
+                if sight.name == annotation.title{
+                    imageName = sight.iconName!
+                    annotationView?.image = UIImage(named: imageName)
+                }
+            }
+            
+
             let rightButton: AnyObject! = UIButton(type: UIButton.ButtonType.detailDisclosure)
-            
+
             annotationView!.rightCalloutAccessoryView = rightButton as? UIView
         }
         else {
             annotationView?.annotation = annotation
         }
-        
+
         return annotationView
     }
     
@@ -72,6 +108,11 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         if segue.identifier == "getSightDetail"{
             let destination = segue.destination as! SightInfoViewController
             destination.sightName = (sender as! MKAnnotationView).annotation!.title!
+        }
+        else if segue.identifier == "sightsListSegue"{
+            let destination = segue.destination as! SightsListTableViewController
+            destination.mapFoucusDelegate = self
+            destination.mapViewController = self
         }
     }
     

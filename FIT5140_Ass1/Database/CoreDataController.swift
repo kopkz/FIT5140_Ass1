@@ -18,6 +18,8 @@ class CoreDataController: NSObject, DatabaseProtocol, NSFetchedResultsController
     //Results
     var sightsFetchedResultsController: NSFetchedResultsController<Sights>?
     var imagesFetchedResultsController: NSFetchedResultsController<Images>?
+    var unLInkedIamgesFetchedResultsController: NSFetchedResultsController<Images>?
+    var sightImagesFetchedResultsController: NSFetchedResultsController<Images>?
     
     override init() {
         persistentContainer = NSPersistentContainer(name: "Ass1-Sights")
@@ -66,6 +68,7 @@ class CoreDataController: NSObject, DatabaseProtocol, NSFetchedResultsController
     }
     
     func addImageToSight(sight: Sights, image: Images) -> Bool {
+        print(image.imageName)
         guard let images = sight.sightImages, images.contains(image) == false  else {
             return false
         }
@@ -133,10 +136,34 @@ class CoreDataController: NSObject, DatabaseProtocol, NSFetchedResultsController
         return sights
     }
     
+    func fetchSightsDescending() -> [Sights] {
+        if sightsFetchedResultsController == nil {
+            let fetchRequest: NSFetchRequest<Sights> = Sights.fetchRequest()
+            let nameSortDescriptor = NSSortDescriptor(key: "name", ascending: false)
+            
+            fetchRequest.sortDescriptors = [nameSortDescriptor]
+            sightsFetchedResultsController = NSFetchedResultsController<Sights>(fetchRequest: fetchRequest, managedObjectContext: persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+            sightsFetchedResultsController?.delegate = self
+            
+            do{
+                try sightsFetchedResultsController?.performFetch()
+            } catch {
+                print("Fetch Request faild: \(error)")
+            }
+        }
+        
+        var sights = [Sights]()
+        if sightsFetchedResultsController?.fetchedObjects != nil {
+            sights = (sightsFetchedResultsController?.fetchedObjects)!
+        }
+        
+        return sights
+    }
+    
     func fetchImages() -> [Images]{
         if imagesFetchedResultsController == nil {
             let fetchRequest: NSFetchRequest<Images> = Images.fetchRequest()
-            let nameSortDescriptor = NSSortDescriptor(key: "name", ascending: true)
+            let nameSortDescriptor = NSSortDescriptor(key: "imageName", ascending: true)
             
             fetchRequest.sortDescriptors = [nameSortDescriptor]
             imagesFetchedResultsController = NSFetchedResultsController<Images>(fetchRequest: fetchRequest, managedObjectContext: persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
@@ -156,6 +183,60 @@ class CoreDataController: NSObject, DatabaseProtocol, NSFetchedResultsController
         
         return images
     }
+    
+    func fetchUnLInkedIamges() -> [Images] {
+        var sightsName = [String]()
+        let sights = fetchSights()
+        for sight in sights {
+            sightsName.append(sight.name!)
+        }
+        let images = fetchImages()
+        
+        if unLInkedIamgesFetchedResultsController == nil {
+            let fetchRequest: NSFetchRequest<Images> = Images.fetchRequest()
+            let nameSortDescriptor = NSSortDescriptor(key: "imageName", ascending: true)
+            fetchRequest.sortDescriptors = [nameSortDescriptor]
+            let predicate = NSPredicate(format: "ANY imageOfSight.name IN %@", sightsName)
+            fetchRequest.predicate = predicate
+            unLInkedIamgesFetchedResultsController = NSFetchedResultsController<Images>(fetchRequest: fetchRequest, managedObjectContext: persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+            unLInkedIamgesFetchedResultsController?.delegate = self
+            do {
+                try unLInkedIamgesFetchedResultsController?.performFetch()
+            } catch {
+                print("Fetch Request failed: \(error)") }
+        }
+        var linkedImages = [Images]()
+        if unLInkedIamgesFetchedResultsController?.fetchedObjects != nil {
+            linkedImages = (unLInkedIamgesFetchedResultsController?.fetchedObjects)! }
+        
+        return images.difference(from: linkedImages) }
+    
+    func fetchSightImages(sightName: String) -> [Images]{
+        if sightImagesFetchedResultsController == nil {
+            let fetchRequest: NSFetchRequest<Images> = Images.fetchRequest()
+            let nameSortDescriptor = NSSortDescriptor(key: "name", ascending: true)
+            
+            fetchRequest.sortDescriptors = [nameSortDescriptor]
+            let predicate = NSPredicate(format: "ANY imageOfSight.name == %@", sightName)
+            fetchRequest.predicate = predicate
+            sightImagesFetchedResultsController = NSFetchedResultsController<Images>(fetchRequest: fetchRequest, managedObjectContext: persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+            sightImagesFetchedResultsController?.delegate = self
+            
+            do{
+                try sightImagesFetchedResultsController?.performFetch()
+            } catch {
+                print("Fetch Request faild: \(error)")
+            }
+        }
+        
+        var images = [Images]()
+        if sightImagesFetchedResultsController?.fetchedObjects != nil {
+            images = (sightImagesFetchedResultsController?.fetchedObjects)!
+        }
+        
+        return images
+    }
+    
     
      // MARK: - Fetched Results Conttroller Delegate
     
@@ -199,5 +280,13 @@ class CoreDataController: NSObject, DatabaseProtocol, NSFetchedResultsController
         let _ = addSight(name: "Carlton Gardens", descripution: "The Carlton Gardens is a World Heritage Site located on the northeastern edge of the Central Business District in the suburb of Carlton, in Melbourne, Australia.", shortDescripution: "1-111 Carlton St, Carlton VIC 3053", iconName: "baseline_party_mode_black_18dp.png", latitude: -37.806286, longitude: 144.970781)
         let _ = addSight(name: "Rod Laver Arena", descripution: "Rod Laver Arena at Melbourne Park was completed in 1988 as part of the original National Tennis Centre complex. The arena is the centrepiece of the Australian Open and plays host to a wide range of sports and entertainment events, from tennis matches to international rock stars and motorbike super-cross. The most dynamic transformation Rod Laver Arena has seen was in March 2007 with the FINA 2007 World Swimming Championships when a 50 metre temporary pool was built on the arena’s floor.", shortDescripution: "Olympic Blvd, Melbourne VIC 3001", iconName: "baseline_fitness_center_black_18dp.png", latitude: -37.822182, longitude: 144.978105)
     
+    }
+}
+// to compare array difference, source:https://www.hackingwithswift.com/example-code/language/how-to-find-the-difference-between-two-arrays
+extension Array where Element: Hashable {
+    func difference(from other: [Element]) -> [Element] {
+        let thisSet = Set(self)
+        let otherSet = Set(other)
+        return Array(thisSet.symmetricDifference(otherSet))
     }
 }

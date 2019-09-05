@@ -9,26 +9,27 @@
 import UIKit
 import CoreData
 
-class CreatNewSightUICollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+class CreatNewSightUICollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIImagePickerControllerDelegate, UICollectionViewDelegateFlowLayout, UINavigationControllerDelegate {
 
     @IBOutlet weak var locationTextField: UITextField!
-    @IBOutlet weak var fullDesTextField: UITextField!
-    @IBOutlet weak var shortDesTextField: UITextField!
     @IBOutlet weak var nameTextField: UITextField!
     
+    @IBOutlet weak var fullDesTextView: UITextView!
     @IBOutlet weak var iconCollectionView: UICollectionView!
     @IBOutlet weak var imageCollectionView: UICollectionView!
     
     var images = [UIImage]()
     var icons = [Icons]()
+    var iconName: String?
     
     
-    private let sectionInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+    private let sectionInsets = UIEdgeInsets(top: 10, left: 2, bottom: 10, right: 2)
     private let itemsPerRow: CGFloat = 3
    
     var imagePathList = [String]()
+    var imageDataList = [Images]()
     var managedObjectContext: NSManagedObjectContext?
-    
+    weak var databaseController: DatabaseProtocol?
     
     
     
@@ -37,7 +38,8 @@ class CreatNewSightUICollectionViewController: UIViewController, UICollectionVie
         
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         managedObjectContext = appDelegate?.persistentContainer.viewContext
-        
+        databaseController = appDelegate!.databaseController
+
         imageCollectionView.delegate = self
         imageCollectionView.dataSource = self
         
@@ -47,6 +49,10 @@ class CreatNewSightUICollectionViewController: UIViewController, UICollectionVie
         self.view.addSubview(iconCollectionView)
         self.view.addSubview(imageCollectionView)
         createDefaultIcons()
+        
+        fullDesTextView.adjustsFontForContentSizeCategory = true
+        fullDesTextView.layer.borderColor = UIColor.black.cgColor
+        fullDesTextView.layer.cornerRadius = 16
     }
     
     
@@ -54,9 +60,8 @@ class CreatNewSightUICollectionViewController: UIViewController, UICollectionVie
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        do {
-            let imageDataList = try managedObjectContext!.fetch(Images.fetchRequest()) as [Images]
-            if(images.count > 0) {
+            imageDataList =  databaseController!.fetchUnLInkedIamges() as [Images]
+            if(imageDataList.count > 0) {
                 for data in imageDataList {
                     let fileName = data.imageName!
                     
@@ -72,9 +77,6 @@ class CreatNewSightUICollectionViewController: UIViewController, UICollectionVie
                     }
                 }
             }
-        } catch {
-            print("Unable to fetch list of parties")
-        }
     }
     
     func loadImageData(fileName: String) -> UIImage? {
@@ -111,6 +113,7 @@ class CreatNewSightUICollectionViewController: UIViewController, UICollectionVie
         }
         return images.count
     }
+    
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         // Access
@@ -156,6 +159,27 @@ class CreatNewSightUICollectionViewController: UIViewController, UICollectionVie
         return imageCell
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
+        if collectionView == self.iconCollectionView {
+            let iconCell = collectionView.dequeueReusableCell(withReuseIdentifier: "iconCell", for: indexPath) as! IconCollectionViewCell
+            iconCell.isHighlighted = true
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == self.iconCollectionView {
+           let iconCell = collectionView.cellForItem(at: indexPath) as! IconCollectionViewCell
+           iconCell.isSelected = true
+            
+            iconName = icons[indexPath.row].imageName
+        }
+    }
+    
     
     func collectionView(_ collectionView: UICollectionView, layout
         collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath:
@@ -224,8 +248,10 @@ class CreatNewSightUICollectionViewController: UIViewController, UICollectionVie
         
         if collectionView == self.iconCollectionView{
             return 10}
-        return sectionInsets.left
+        return 0
     }
+
+
     
     func createDefaultIcons(){
         icons.append(Icons(imageName: "baseline_train_black_18dp.png", iconName: "Transport"))
@@ -245,9 +271,83 @@ class CreatNewSightUICollectionViewController: UIViewController, UICollectionVie
 //    }
     
     @IBAction func addNewPhoto(_ sender: Any) {
+        let controller = UIImagePickerController()
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            controller.sourceType = .camera
+        } else {
+            controller.sourceType = .photoLibrary
+        }
+        controller.allowsEditing = false
+        controller.delegate = self
+        self.present(controller, animated: true, completion: nil)
     }
     @IBAction func saveNewSight(_ sender: Any) {
+        if nameTextField.text != "" && locationTextField.text != "" && (iconName != nil) {
+            let name = nameTextField.text!
+            let shortDes = locationTextField.text!
+            let description = fullDesTextView.text!
+            let lat = Double(locationTextField.text!.split(separator: ",")[0])
+            let long = Double(locationTextField.text!.split(separator: ",")[1])
+            if lat != nil && long != nil {
+                guard let newSight = databaseController?.addSight(name: name, descripution: description, shortDescripution: shortDes, iconName: iconName!, latitude: lat!, longitude: long!) else {
+                    let errorMsg = "New sight creating fail, please try again"
+                    displayMessage(title: "Unkown error", message: errorMsg)
+                    return }
+          
+                for image in imageDataList {
+                    databaseController?.addImageToSight(sight: newSight, image: image)
+                }
+                navigationController?.popViewController(animated: true)
+                return
+            
+            } else {
+                let errorMsg = "Location should be 'latitude,longitude', eg: 33.33,22.22"
+                displayMessage(title: "Unaccepted Location", message: errorMsg)
+                return
+            }
+        }
+        
+         var errorMsg = "Please ensure all fields are filled:\n"
+        
+        if nameTextField.text == "" {
+            errorMsg += "- Must provide a name\n"
+        }
+        if locationTextField.text == "" {
+            errorMsg += "- Must provide a location\n"
+        }
+        if iconName == nil  {
+            errorMsg += "- Must select a icon"
+        }
+        displayMessage(title: "Not all fields filled", message: errorMsg)
     }
     
     
+    func displayMessage(title: String, message: String) {
+        // Setup an alert to show user details about the Person
+        // UIAlertController manages an alert instance
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+        alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertAction.Style.default,handler: nil))
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController,
+                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let pickedImage = info[.originalImage] as? UIImage {
+            imageView.image = pickedImage
+            dismiss(animated: true, completion: nil)
+        }
+        
+    }
+    
+    func imagePickerControllerDidCancel(_picker: UIImagePickerController){
+        displayMessage("There was an error in getting the image", "Error")
+    }
+    
+    func displayMessage(_ message: String,_ title: String) {
+        let alertController = UIAlertController(title: title, message: message,
+                                                preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Dismiss", style: .default,
+                                                handler: nil))
+        self.present(alertController, animated: true, completion: nil)
+    }
 }

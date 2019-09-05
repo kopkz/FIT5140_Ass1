@@ -39,4 +39,8 @@ protocol DatabaseProtocol: AnyObject {
     func addListener(listenr: DatabaseListener)
     func removeListener(listenr: DatabaseListener)
     func fetchSights() -> [Sights]
+    func fetchImages() -> [Images]
+    func fetchSightsDescending() -> [Sights]
+    func fetchUnLInkedIamges() -> [Images]
+    func fetchSightImages(sightName: String) -> [Images]
 }

@@ -20,12 +20,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         databaseController = CoreDataController()
         
-        let splitView = self.window!.rootViewController as! UISplitViewController
-        let navigationController = splitView.viewControllers.first as! UINavigationController
-        let mapView = splitView.viewControllers.last as! MapViewController
-        let locationView = navigationController.viewControllers.first as! SightsListTableViewController
-        
-        locationView.mapViewController = mapView
+//        let splitView = self.window!.rootViewController as! UISplitViewController
+//        let navigationController = splitView.viewControllers.first as! UINavigationController
+//        let mapView = splitView.viewControllers.last as! MapViewController
+//        let locationView = navigationController.viewControllers.first as! SightsListTableViewController
+//        
+//        locationView.mapViewController = mapView
         
         return true
     }

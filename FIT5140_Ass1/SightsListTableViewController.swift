@@ -12,6 +12,7 @@ class SightsListTableViewController: UITableViewController, UISearchResultsUpdat
     
 //    var locationManager: CLLocationManager = CLLocationManager()
     var mapViewController: MapViewController?
+    weak var mapFoucusDelegate: MapFocusDelegate?
     
     let SECTION_SIGHTS = 0
     let SECTION_COUNT = 1
@@ -20,7 +21,6 @@ class SightsListTableViewController: UITableViewController, UISearchResultsUpdat
     
     var allSights: [Sights] = []
     var filteredSights: [Sights] = []
-    var locations = [LocationAnnotation]()
     weak var databaseController: DatabaseProtocol?
 
     override func viewDidLoad() {
@@ -35,15 +35,14 @@ class SightsListTableViewController: UITableViewController, UISearchResultsUpdat
         // This view controller decides how the search controller is presented.
         definesPresentationContext = true
         
-
-        
-        let sights = databaseController!.fetchSights()
-        
-        for sight in sights {
-            let location = LocationAnnotation(newTitle: sight.name!, newSubtitle: sight.shortDesscripution!, lat: sight.latitude, long: sight.longitude, iconName: sight.iconName!)
-            mapViewController?.mapView.addAnnotation(location)
-            locations.append(location)
-        }
+//
+//        let sights = databaseController!.fetchSights()
+//
+//        for sight in sights {
+//            let location = LocationAnnotation(newTitle: sight.name!, newSubtitle: sight.shortDesscripution!, lat: sight.latitude, long: sight.longitude, iconName: sight.iconName!)
+////            mapViewController?.mapView.addAnnotation(location)
+//            locations.append(location)
+//        }
         
     
         
@@ -131,16 +130,18 @@ class SightsListTableViewController: UITableViewController, UISearchResultsUpdat
         if indexPath.section == SECTION_COUNT {
             tableView.deselectRow(at: indexPath, animated: false)
         }
-        tableView.deselectRow(at: indexPath, animated: true)
-        var filteredLocation: LocationAnnotation
+        else if indexPath.section == SECTION_SIGHTS {
+            tableView.deselectRow(at: indexPath, animated: true)
+            var filteredLocation: LocationAnnotation
+            
+            for sight in allSights {
+                if sight.name == filteredSights[indexPath.row].name {
+                    filteredLocation = LocationAnnotation(newTitle: sight.name!, newSubtitle: sight.shortDesscripution!, lat: sight.latitude, long: sight.longitude, iconName: sight.iconName!)
+                    mapFoucusDelegate!.focusOn(annotation: filteredLocation) 
+                    self.navigationController?.popViewController(animated: true)
+                }
+            }}
         
-        for location in locations {
-            if location.title == filteredSights[indexPath.row].name {
-                filteredLocation =  location
-                mapViewController?.focusOn(annotation: filteredLocation)
-                self.navigationController?.popViewController(animated: true)
-            }
-        }
        
         
     
@@ -188,23 +189,26 @@ class SightsListTableViewController: UITableViewController, UISearchResultsUpdat
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete && indexPath.section == SECTION_SIGHTS{
             // Delete the row from the data source
-            var filteredLocation: LocationAnnotation
             
-            for location in locations {
-                if location.title == filteredSights[indexPath.row].name {
-                    locations.remove(at: locations.firstIndex(of: location)!)
-                    filteredLocation =  location
-                    mapViewController?.mapView.removeAnnotation(filteredLocation)
+            for sight in allSights {
+                if sight.name == filteredSights[indexPath.row].name {
+                    mapFoucusDelegate!.removeAnnotation(name: filteredSights[indexPath.row].name!)
+                    
+                    self.filteredSights.remove(at: allSights.firstIndex(of: sight)!)
+                    self.allSights.remove(at: allSights.firstIndex(of: sight)!)
+                    
+                    tableView.deleteRows(at: [indexPath], with: .fade)
+                    self.databaseController?.deleteSight(sight: sight)
+                
+                    break
                 }
             }
-            self.allSights.remove(at: indexPath.row)
-            self.filteredSights.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
         }
 //        else if editingStyle == .insert {
 //            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
 //        }
     }
+    
     
 
     /*

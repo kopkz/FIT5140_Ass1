@@ -25,6 +25,7 @@
 		703A8A70231D77CE00B0B26F /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 703A8A6F231D77CE00B0B26F /* CameraViewController.swift */; };
 		703A8A76231E8A8C00B0B26F /* SightsAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 703A8A75231E8A8C00B0B26F /* SightsAnnotationView.swift */; };
 		7054D035231F2C07002E0A3A /* SightInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7054D034231F2C07002E0A3A /* SightInfoViewController.swift */; };
+		7054D037231F512A002E0A3A /* MapFocusDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7054D036231F512A002E0A3A /* MapFocusDelegate.swift */; };
 		70A2E6F823182FC100A59F02 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A2E6F723182FC100A59F02 /* AppDelegate.swift */; };
 		70A2E6FD23182FC100A59F02 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 70A2E6FB23182FC100A59F02 /* Main.storyboard */; };
 		70A2E70223182FC200A59F02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70A2E70123182FC200A59F02 /* Assets.xcassets */; };
@@ -51,6 +52,7 @@
 		703A8A6F231D77CE00B0B26F /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		703A8A75231E8A8C00B0B26F /* SightsAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SightsAnnotationView.swift; sourceTree = "<group>"; };
 		7054D034231F2C07002E0A3A /* SightInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SightInfoViewController.swift; sourceTree = "<group>"; };
+		7054D036231F512A002E0A3A /* MapFocusDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFocusDelegate.swift; sourceTree = "<group>"; };
 		70A2E6F423182FC100A59F02 /* FIT5140_Ass1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FIT5140_Ass1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		70A2E6F723182FC100A59F02 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		70A2E6FC23182FC100A59F02 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 				703A8A6F231D77CE00B0B26F /* CameraViewController.swift */,
 				703A8A75231E8A8C00B0B26F /* SightsAnnotationView.swift */,
 				7054D034231F2C07002E0A3A /* SightInfoViewController.swift */,
+				7054D036231F512A002E0A3A /* MapFocusDelegate.swift */,
 			);
 			path = FIT5140_Ass1;
 			sourceTree = "<group>";
@@ -222,6 +225,7 @@
 				703A8A5C231C171B00B0B26F /* MulticastDelegate.swift in Sources */,
 				703A8A6E231D5E1500B0B26F /* Icons.swift in Sources */,
 				703A8A66231CD7A100B0B26F /* LocationAnnotation.swift in Sources */,
+				7054D037231F512A002E0A3A /* MapFocusDelegate.swift in Sources */,
 				703A8A70231D77CE00B0B26F /* CameraViewController.swift in Sources */,
 				70A2E70F23190AEE00A59F02 /* Ass1-Sights.xcdatamodeld in Sources */,
 				703A8A58231BD52700B0B26F /* Sights+CoreDataProperties.swift in Sources */,
