@@ -43,4 +43,5 @@ protocol DatabaseProtocol: AnyObject {
     func fetchSightsDescending() -> [Sights]
     func fetchUnLInkedIamges() -> [Images]
     func fetchSightImages(sightName: String) -> [Images]
+    func updateSight(oldname: String, name: String, descripution: String, shortDescripution: String) -> Sights
 }

@@ -9,14 +9,15 @@
 import UIKit
 import CoreData
 
-class CreatNewSightUICollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIImagePickerControllerDelegate, UICollectionViewDelegateFlowLayout, UINavigationControllerDelegate {
+class CreatNewSightUICollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIImagePickerControllerDelegate, UICollectionViewDelegateFlowLayout, UINavigationControllerDelegate,UITextFieldDelegate, UITextViewDelegate {
 
     @IBOutlet weak var locationTextField: UITextField!
     @IBOutlet weak var nameTextField: UITextField!
     
+    @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var fullDesTextView: UITextView!
     @IBOutlet weak var iconCollectionView: UICollectionView!
-    @IBOutlet weak var imageCollectionView: UICollectionView!
+    
     
     var images = [UIImage]()
     var icons = [Icons]()
@@ -35,64 +36,77 @@ class CreatNewSightUICollectionViewController: UIViewController, UICollectionVie
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        locationTextField.delegate = self
+        nameTextField.delegate = self
+        fullDesTextView.delegate = self
         
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         managedObjectContext = appDelegate?.persistentContainer.viewContext
         databaseController = appDelegate!.databaseController
-
-        imageCollectionView.delegate = self
-        imageCollectionView.dataSource = self
-        
+        createDefaultIcons()
         iconCollectionView.delegate = self
         iconCollectionView.dataSource = self
         
-        self.view.addSubview(iconCollectionView)
-        self.view.addSubview(imageCollectionView)
-        createDefaultIcons()
+//        self.view.addSubview(iconCollectionView)
+        
         
         fullDesTextView.adjustsFontForContentSizeCategory = true
-        fullDesTextView.layer.borderColor = UIColor.black.cgColor
+        fullDesTextView.layer.borderWidth = 0.5
+        fullDesTextView.layer.borderColor = UIColor.lightGray.cgColor
         fullDesTextView.layer.cornerRadius = 16
     }
     
-    
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-            imageDataList =  databaseController!.fetchUnLInkedIamges() as [Images]
-            if(imageDataList.count > 0) {
-                for data in imageDataList {
-                    let fileName = data.imageName!
-                    
-                    if(imagePathList.contains(fileName)) {
-                        print("Image already loaded in. Skipping image")
-                        continue
-                    }
-                    
-                    if let image = loadImageData(fileName: fileName) {
-                        self.images.append(image)
-                        self.imagePathList.append(fileName)
-                        self.imageCollectionView!.reloadSections([0])
-                    }
-                }
-            }
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
-    
-    func loadImageData(fileName: String) -> UIImage? {
-        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory,
-                                                       .userDomainMask, true)[0] as String
-        let url = NSURL(fileURLWithPath: path)
-        var image: UIImage?
-        if let pathComponent = url.appendingPathComponent(fileName) {
-            let filePath = pathComponent.path
-            let fileManager = FileManager.default
-            let fileData = fileManager.contents(atPath: filePath)
-            image = UIImage(data: fileData!)
+    //diss miss textView keyboard https://blog.csdn.net/baixiaozhe/article/details/49274701
+    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+        if (text == "\n") {
+            textView.resignFirstResponder()
+            return false
         }
-        return image
+        return true
     }
     
+   
+    
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//
+//            imageDataList =  databaseController!.fetchUnLInkedIamges() as [Images]
+//            if(imageDataList.count > 0) {
+//                for data in imageDataList {
+//                    let fileName = data.imageName!
+//
+//                    if(imagePathList.contains(fileName)) {
+//                        print("Image already loaded in. Skipping image")
+//                        continue
+//                    }
+//
+//                    if let image = loadImageData(fileName: fileName) {
+//                        self.images.append(image)
+//                        self.imagePathList.append(fileName)
+//                        self.imageCollectionView!.reloadSections([0])
+//                    }
+//                }
+//            }
+//    }
+    
+//    func loadImageData(fileName: String) -> UIImage? {
+//        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory,
+//                                                       .userDomainMask, true)[0] as String
+//        let url = NSURL(fileURLWithPath: path)
+//        var image: UIImage?
+//        if let pathComponent = url.appendingPathComponent(fileName) {
+//            let filePath = pathComponent.path
+//            let fileManager = FileManager.default
+//            let fileData = fileManager.contents(atPath: filePath)
+//            image = UIImage(data: fileData!)
+//        }
+//        return image
+//    }
+//
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // Set the number of items in your collection view.
@@ -108,11 +122,11 @@ class CreatNewSightUICollectionViewController: UIViewController, UICollectionVie
         
         
 
-        if collectionView == self.iconCollectionView {
+//        if collectionView == self.iconCollectionView {
             return 10
         }
-        return images.count
-    }
+//        return images.count
+//    }
     
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -143,28 +157,30 @@ class CreatNewSightUICollectionViewController: UIViewController, UICollectionVie
 
 
 
-        if collectionView == self.iconCollectionView{
+//        if collectionView == self.iconCollectionView{
             let iconCell = collectionView.dequeueReusableCell(withReuseIdentifier: "iconCell", for: indexPath) as! IconCollectionViewCell
-            let icon = icons[indexPath.row]
+//        print(indexPath.row)
+//        print(icons.count)
+        let icon = icons[indexPath.row]
             iconCell.iconImageView.image = UIImage(named: icon.imageName)
             iconCell.iconNameLabel.text = icon.iconName
             return iconCell
-        }
-        else {
-        let imageCell = collectionView.dequeueReusableCell(withReuseIdentifier: "imageCell", for: indexPath) as! ImageCollectionViewCell
-
-        imageCell.backgroundColor = UIColor.lightGray
-        imageCell.imageView.image = images[indexPath.row]
-
-        return imageCell
-        }
+//        }
+//        else {
+//        let imageCell = collectionView.dequeueReusableCell(withReuseIdentifier: "imageCell", for: indexPath) as! ImageCollectionViewCell
+//
+//        imageCell.backgroundColor = UIColor.lightGray
+//        imageCell.imageView.image = images[indexPath.row]
+//
+//        return imageCell
+//        }
     }
     
     func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
-        if collectionView == self.iconCollectionView {
+//        if collectionView == self.iconCollectionView {
             let iconCell = collectionView.dequeueReusableCell(withReuseIdentifier: "iconCell", for: indexPath) as! IconCollectionViewCell
             iconCell.isHighlighted = true
-        }
+//        }
     }
     
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
@@ -172,84 +188,84 @@ class CreatNewSightUICollectionViewController: UIViewController, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if collectionView == self.iconCollectionView {
+//        if collectionView == self.iconCollectionView {
            let iconCell = collectionView.cellForItem(at: indexPath) as! IconCollectionViewCell
            iconCell.isSelected = true
             
             iconName = icons[indexPath.row].imageName
-        }
+//        }
     }
     
     
     func collectionView(_ collectionView: UICollectionView, layout
         collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath:
         IndexPath) -> CGSize {
-        
-        
-//        switch collectionView.tag {
-//        case 0:
-//            return CGSize(width: 60, height: 60)
-//        case 1:
-//            let paddingSpace = sectionInsets.left * (itemsPerRow + 1)
-//            let availableWidth = view.frame.width - paddingSpace
-//            let widthPerItem = availableWidth / itemsPerRow
-//            return CGSize(width: widthPerItem, height: widthPerItem)
 //
-//        default:
+//
+////        switch collectionView.tag {
+////        case 0:
+////            return CGSize(width: 60, height: 60)
+////        case 1:
+////            let paddingSpace = sectionInsets.left * (itemsPerRow + 1)
+////            let availableWidth = view.frame.width - paddingSpace
+////            let widthPerItem = availableWidth / itemsPerRow
+////            return CGSize(width: widthPerItem, height: widthPerItem)
+////
+////        default:
+           return CGSize(width: 60, height: 60)
+       }
+//
+//
+//        if collectionView == self.iconCollectionView{
 //            return CGSize(width: 60, height: 60)
 //        }
-        
-
-        if collectionView == self.iconCollectionView{
-            return CGSize(width: 60, height: 60)
-        }
-        else{
-        let paddingSpace = sectionInsets.left * (itemsPerRow + 1)
-        let availableWidth = view.frame.width - paddingSpace
-        let widthPerItem = availableWidth / itemsPerRow
-        return CGSize(width: widthPerItem, height: widthPerItem)
-        }
-    }
-    
+//        else{
+//        let paddingSpace = sectionInsets.left * (itemsPerRow + 1)
+//        let availableWidth = view.frame.width - paddingSpace
+//        let widthPerItem = availableWidth / itemsPerRow
+//        return CGSize(width: widthPerItem, height: widthPerItem)
+//        }
+//    }
+//
     func collectionView(_ collectionView: UICollectionView, layout
         collectionViewLayout: UICollectionViewLayout, insetForSectionAt
         section: Int) -> UIEdgeInsets {
-        
-        
-//        switch collectionView.tag {
-//        case 0:
-//            return UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
-//        case 1:
-//            return sectionInsets
 //
-//        default:
-//            return UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
-//        }
-        
-        
-        
-        if collectionView == self.iconCollectionView{
+//
+////        switch collectionView.tag {
+////        case 0:
+////            return UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+////        case 1:
+////            return sectionInsets
+////
+////        default:
             return UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
         }
-        return sectionInsets
-    }
-    
-     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-       
-//        switch collectionView.tag {
-//        case 0:
-//           return 10
-//        case 1:
-//            return sectionInsets.left
 //
-//        default:
-//            return 10
+//
+//
+//        if collectionView == self.iconCollectionView{
+//            return UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
 //        }
-        
-        if collectionView == self.iconCollectionView{
-            return 10}
-        return 0
-    }
+//        return sectionInsets
+//    }
+//
+     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+//
+////        switch collectionView.tag {
+////        case 0:
+////           return 10
+////        case 1:
+////            return sectionInsets.left
+////
+////        default:
+            return 10
+        }
+//
+//        if collectionView == self.iconCollectionView{
+//            return 10}
+//        return 0
+//    }
 
 
     
@@ -281,6 +297,7 @@ class CreatNewSightUICollectionViewController: UIViewController, UICollectionVie
         controller.delegate = self
         self.present(controller, animated: true, completion: nil)
     }
+    
     @IBAction func saveNewSight(_ sender: Any) {
         if nameTextField.text != "" && locationTextField.text != "" && (iconName != nil) {
             let name = nameTextField.text!
@@ -289,13 +306,34 @@ class CreatNewSightUICollectionViewController: UIViewController, UICollectionVie
             let lat = Double(locationTextField.text!.split(separator: ",")[0])
             let long = Double(locationTextField.text!.split(separator: ",")[1])
             if lat != nil && long != nil {
+                if lat?.isLess(than: -90) ?? true || long?.isLess(than: -180) ?? true || 90.00.isLess(than: lat!) || 180.00.isLess(than: long!) {
+                    let errorMsg = "Latitude: -90~90, Longitude: -180~180"
+                    displayMessage(title: "Coordinate out of rang", message: errorMsg)
+                    return
+                }
                 guard let newSight = databaseController?.addSight(name: name, descripution: description, shortDescripution: shortDes, iconName: iconName!, latitude: lat!, longitude: long!) else {
                     let errorMsg = "New sight creating fail, please try again"
                     displayMessage(title: "Unkown error", message: errorMsg)
                     return }
-          
-                for image in imageDataList {
-                    databaseController?.addImageToSight(sight: newSight, image: image)
+                guard let image = imageView.image else {
+                    return
+                }
+                
+                let date = UInt(Date().timeIntervalSince1970)
+                var data = Data()
+                data = image.jpegData(compressionQuality: 0.8)!
+                let path = NSSearchPathForDirectoriesInDomains(.documentDirectory,
+                                                               .userDomainMask, true)[0] as String
+                let url = NSURL(fileURLWithPath: path)
+                
+                if let pathComponent = url.appendingPathComponent("\(date)") {
+                    let filePath = pathComponent.path
+                    let fileManager = FileManager.default
+                    fileManager.createFile(atPath: filePath, contents: data,
+                                           attributes: nil)
+                    let newImage = databaseController?.addImage(imageName: "\(date)")
+                        
+                    databaseController?.addImageToSight(sight: newSight, image: newImage!)
                 }
                 navigationController?.popViewController(animated: true)
                 return

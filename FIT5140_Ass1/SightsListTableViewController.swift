@@ -72,12 +72,14 @@ class SightsListTableViewController: UITableViewController, UISearchResultsUpdat
     
     func updateSearchResults(for searchController: UISearchController) {
         if let searchText = searchController.searchBar.text?.lowercased(), searchText.count > 0 {
+            //allSights.filter(<#T##isIncluded: (Sights) throws -> Bool##(Sights) throws -> Bool#>)
             filteredSights = allSights.filter({(sight: Sights) -> Bool in
                 return sight.name?.lowercased().contains(searchText) ?? false
             })
         }
         else {
             filteredSights = allSights
+            
         }
         
         tableView.reloadData()
@@ -110,7 +112,7 @@ class SightsListTableViewController: UITableViewController, UISearchResultsUpdat
             sightCell.nameLabel.text = sight.name
             sightCell.shortDesLabel.text = sight.shortDesscripution
             sightCell.iconImageView.image = UIImage(named: sight.iconName!)
-            
+            mapFoucusDelegate!.addAnnotation(sight: sight)
             
             return sightCell
         }
@@ -132,12 +134,10 @@ class SightsListTableViewController: UITableViewController, UISearchResultsUpdat
         }
         else if indexPath.section == SECTION_SIGHTS {
             tableView.deselectRow(at: indexPath, animated: true)
-            var filteredLocation: LocationAnnotation
             
             for sight in allSights {
                 if sight.name == filteredSights[indexPath.row].name {
-                    filteredLocation = LocationAnnotation(newTitle: sight.name!, newSubtitle: sight.shortDesscripution!, lat: sight.latitude, long: sight.longitude, iconName: sight.iconName!)
-                    mapFoucusDelegate!.focusOn(annotation: filteredLocation) 
+                    mapFoucusDelegate!.focusOn(name: sight.name!)
                     self.navigationController?.popViewController(animated: true)
                 }
             }}

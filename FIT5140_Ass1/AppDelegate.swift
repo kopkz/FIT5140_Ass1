@@ -8,8 +8,10 @@
 
 import UIKit
 import CoreData
+import UserNotifications
 
 @UIApplicationMain
+
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
@@ -27,6 +29,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        
 //        locationView.mapViewController = mapView
         
+        
+        //notification
+        
+        
+        //Configuration
+        
+            //granted = yes, if app is authorized for all of the requested interaction types
+            //granted = no, if one or more interaction type is disallowed
+    
         return true
     }
 

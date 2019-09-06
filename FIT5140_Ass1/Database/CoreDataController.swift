@@ -58,6 +58,20 @@ class CoreDataController: NSObject, DatabaseProtocol, NSFetchedResultsController
         saveContext()
         return sight
     }
+    func updateSight(oldname: String, name: String, descripution: String, shortDescripution: String) -> Sights {
+        var sighT = Sights()
+        let sights = fetchSights()
+        for sight in sights {
+            if sight.name == oldname {
+                sight.name = name
+                sight.descripution = descripution
+                sight.shortDesscripution = shortDescripution
+                sighT = sight
+            }
+        }
+        saveContext()
+        return sighT
+    }
     
     func addImage(imageName: String) -> Images {
         let image = NSEntityDescription.insertNewObject(forEntityName: "Images", into: persistentContainer.viewContext) as! Images
@@ -68,14 +82,15 @@ class CoreDataController: NSObject, DatabaseProtocol, NSFetchedResultsController
     }
     
     func addImageToSight(sight: Sights, image: Images) -> Bool {
-        print(image.imageName)
         guard let images = sight.sightImages, images.contains(image) == false  else {
+           print("fail")
             return false
         }
         
         sight.addToSightImages(image)
         
         saveContext()
+        print("succeed")
         return true
     }
     
@@ -277,9 +292,16 @@ class CoreDataController: NSObject, DatabaseProtocol, NSFetchedResultsController
         let _ = addSight(name: "RMIT University", descripution: "One of Australia's original tertiary institutions, RMIT University enjoys an international reputation for excellence in professional and vocational education, applied research, and engagement with the needs of industry and the community.", shortDescripution: "124 La Trobe St, Melbourne VIC 3000", iconName: "baseline_menu_book_black_18dp.png", latitude: -37.808121, longitude: 144.963522)
         let _ = addSight(name: "Old Melbourne Gaol", descripution: "The Gaol’s first cellblock was opened in 1845. Gold was discovered in 1851 and in the next four years Melbourne’s population increased from 23,000 to nearly 90,000. Overcrowding soon became a huge problem for the Gaol, with the Argus newspaper complaining in 1853 that the old cellblock was “literally crammed to suffocation”. A second cellblock was not completed until 1859. It was similar in design to the earlier cellblock but contained what the Argus described as “an aspect of greater airiness and cheerfulness”. This new cellblock had a modern, progressive design. It included innovations such as good ventilation, a clean water supply, a food hoist, adequate exercise yards and the use of steam in the bath-house, wash-house and kitchen.", shortDescripution: "377 Russell St, Melbourne VIC 3000", iconName: "baseline_party_mode_black_18dp.png", latitude: -37.807761, longitude: 144.965449)
         let _ = addSight(name: "SEA LIFE Melbourne Aquarium", descripution: "Dive into one of Melbourne's top attractions, SEA LIFE Melbourne Aquarium, and walk through our crowd-favourite oceanarium tunnels, get hands-on in the Discovery Rockpools and marvel as our King and Gentoo Penguins dive in and out of the water within their icy habitat. No matter your favourite underwater creature, our aquarium never fails to create lasting memories full of fun and adventure.", shortDescripution: "King St, Melbourne VIC 3000", iconName: "baseline_party_mode_black_18dp.png", latitude: -37.820797, longitude: 144.958229)
-        let _ = addSight(name: "Carlton Gardens", descripution: "The Carlton Gardens is a World Heritage Site located on the northeastern edge of the Central Business District in the suburb of Carlton, in Melbourne, Australia.", shortDescripution: "1-111 Carlton St, Carlton VIC 3053", iconName: "baseline_party_mode_black_18dp.png", latitude: -37.806286, longitude: 144.970781)
+        let si = addSight(name: "Carlton Gardens", descripution: "The Carlton Gardens is a World Heritage Site located on the northeastern edge of the Central Business District in the suburb of Carlton, in Melbourne, Australia.", shortDescripution: "1-111 Carlton St, Carlton VIC 3053", iconName: "baseline_party_mode_black_18dp.png", latitude: -37.806286, longitude: 144.970781)
         let _ = addSight(name: "Rod Laver Arena", descripution: "Rod Laver Arena at Melbourne Park was completed in 1988 as part of the original National Tennis Centre complex. The arena is the centrepiece of the Australian Open and plays host to a wide range of sports and entertainment events, from tennis matches to international rock stars and motorbike super-cross. The most dynamic transformation Rod Laver Arena has seen was in March 2007 with the FINA 2007 World Swimming Championships when a 50 metre temporary pool was built on the arena’s floor.", shortDescripution: "Olympic Blvd, Melbourne VIC 3001", iconName: "baseline_fitness_center_black_18dp.png", latitude: -37.822182, longitude: 144.978105)
-    
+        let i1 = addImage(imageName: "CarltonGardens1.jpg")
+        let i2 = addImage(imageName: "CarltonGardens2.jpg")
+        let i3 = addImage(imageName: "CarltonGardens3.jpg")
+        let i4 = addImage(imageName: "CarltonGardens4.jpg")
+        let _ = addImageToSight(sight: si, image: i1)
+        let _ = addImageToSight(sight: si, image: i2)
+        let _ = addImageToSight(sight: si, image: i3)
+        let _ = addImageToSight(sight: si, image: i4)
     }
 }
 // to compare array difference, source:https://www.hackingwithswift.com/example-code/language/how-to-find-the-difference-between-two-arrays
